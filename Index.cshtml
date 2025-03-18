@@ -1,0 +1,470 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewBag.Title</title>
+
+    <link href="~/Content/botchat.css" rel="stylesheet" />
+    <link href="~/Content/customBotChat.css" rel="stylesheet" />
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    @*<script type="text/javascript" src="https://alcdn.msauth.net/lib/1.2.0/js/msal.js"></script>*@
+    <script type="text/javascript" src="~/Scripts//graph-js-sdk.js"></script>
+    <script type="text/javascript" src="~/Scripts/msal.js"></script>
+    @*<script src="https://unpkg.com/@azure/storage-blob@10.3.0/browser/azure-storage.blob.min.js"
+        integrity="sha384-fsfhtLyVQo3L3Bh73qgQoRR328xEeXnRGdoi53kjo1uectCfAHFfavrBBN2Nkbdf"
+        crossorigin="anonymous"></script>*@
+    <script type="text/javascript">
+        if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/lib/1.2.0/js/msal.js' type='text/javascript' %3E%3C/script%3E"));
+
+    </script>
+
+    <script type="text/javascript" src="~/Scripts/authConfig.js"></script>
+    <script type="text/javascript" src="~/Scripts/authRedirect.js"></script>
+    <script type="module" src="~/Scripts/authSignIn.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script src="~/Scripts/googleAnalytics.js"></script>
+    <script>
+        var direct = '@ViewBag.Token'; var userId = '@ViewBag.Email'; var userName = '@ViewBag.Name';
+        window.speech = '@ViewBag.Speech';
+        var Agend = '@ViewBag.AgentName';
+    </script>
+    <style>
+
+        #bodyContent {
+            overflow: hidden;
+            position: relative;
+            width: 492px;
+            height: 619px;
+            margin: 40px 0 0 34%;
+        }
+
+        .wc-headera {
+            background-color: rgba(0, 64, 101, 1);
+            left: 0;
+            letter-spacing: 0.5px;
+            padding: -2px 8px 0 8px;
+            z-index: 1;
+            position: relative;
+            width: 100% !important;
+            height: 56px;
+            margin: 0 0 -62px 0 !important;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .chatbotdiv {
+            height: 83%;
+            width: 100%;
+        }
+        /*background image*/
+        /*.chatbotdiv > div {
+                background-image: linear-gradient(to bottom right, rgba(228, 228, 228, 0.9), #e2edf5) !important;
+            }*/
+        /*.webchat__bubble__content {
+            max-width: 62vw;
+            color: black;
+            min-height: 38px;
+            background: white;
+            border-color: rgb(230, 230, 230);
+            border-radius: 2px;
+            border-style: solid;
+
+            border-width: 1px;
+        }*/
+        .infobox {
+            display: flex;
+            max-width: 100%;
+            width: 100%;
+            background-color: rgba(0, 64, 101, 1);
+            height: 11%;
+            margin: auto;
+            /*margin: 48px 0 0 0% !important;*/
+            font-size: 14px;
+        }
+
+        #infoboxa h3 {
+            font-family: 'Arial', sans-serif;
+        }
+
+        #infoboxa p {
+            font-family: 'Arial', sans-serif;
+        }
+
+        #IE_Brower {
+            overflow: hidden;
+            position: relative;
+            width: 492px;
+            height: 480px;
+            margin: 40px 0 0 34%;
+            display: none;
+            background-color: rgb(249, 252, 250);
+            text-align: center;
+        }
+
+        .image {
+            background: #e3e5e4;
+        }
+
+        .css-1dgbgmu.avatar {
+            margin-right: 0pc !important;
+        }
+
+        .ac-adaptiveCard, .ac-container {
+            font-family: 'Arial',SANS-SERIF !important;
+            font-size: 14px !important;
+            padding-left: 8px !important;
+        }
+
+        .ac-container {
+            padding-left: 1px !important;
+        }
+
+        .markdown, .markdown * {
+            font-family: Calibri, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .dotPlay {
+            height: 25px;
+            width: 25px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            margin-bottom: 33px;
+            margin-left: -10px;
+        }
+
+        /* Handling unable to drag each card issue in carousal card*/
+        button.react-film__flipper.react-film__main__overlay.react-film__flipper--right {
+            height: 25% !important;
+            top: 38% !important;
+            overflow: initial !important; /* Handling small carousal card scroll arrow type issue*/
+        }
+    </style>
+
+</head>
+<body style="display:none">
+
+    <noscript>
+        <iframe name="theFrame" src="https://copilotstudio.microsoft.com/environments/Default-dfa6c3f8-0b32-4a16-bf66-de2295df0850/bots/cre7b_hrBot/webchat?__version__=2"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="bodyContent">
+        <div class="wc-headera"><img class="wc-header-image" src="../images/logo.png" /></div>
+        <div id="chatBotDiv" class="chatbotdiv"></div>
+        <div id="infoboxa" class="infobox"><div id="imagepart"></div><div id="datadisplay"><h3 id="headerpart"><strong>Disclaimer</strong></h3><p id="datapart">Please do not enter any personal information as part of your interaction with the chatbot.</p></div> </div>
+    </div>
+    <div id="IE_Brower" style="display:none">
+        <div class="panel panel-default">
+            <div class="panel-heading panel-heading-custom">
+
+            </div>
+
+            <div class="panel-body" style="position: absolute; top: 28%;font-family: Calibri, 'Helvetica Neue', Arial, sans-serif;">
+                <p>I'm sorry, the Chatbot does NOT currently support Internet Explorer.</p>
+                <p>
+                    Please navigate to this web application using Google Chrome or by clicking the desktop icon:
+                </p>
+                <img src="/images/ie_bot.jpg">
+            </div>
+        </div>
+
+    </div>
+    <!-- For IOS chrome is not supportable -->
+
+    <div id="IOS_Chrome" style="display:none">
+        <div class="panel panel-default" style="overflow: hidden;
+    position: absolute;left:0;
+    top:56px; width: 100%;">
+            <div class="panel-heading panel-heading-custom">
+
+
+            </div>
+            <div class="panel-body" style="width:100vw ;
+
+    padding: 0 10px;
+    padding-top: 28%;
+    text-align: center;
+    background-color: rgb(249, 252, 250);
+    height: 480px;font-family: Calibri, 'Helvetica Neue', Arial, sans-serif;">
+                @*<div class="chromeIOS">*@
+                <p>I'm sorry, the  Chatbot does NOT currently support Chrome in IOS.</p>
+                <p>
+                    Please navigate to this web application using Safari.
+                </p>
+                @*</div>*@
+                <img src="/images/ie_bot.jpg">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/CognitiveServices.js"></script>
+    @{
+        string AgentName = ViewBag.AgentName;
+        bool MSIE_Count = AgentName.Contains("MSIE");
+        bool Trident_Count = AgentName.Contains("Trident/");
+        bool Edge_Count = AgentName.Contains("Edge/");
+        bool ChromeIOS_Count = AgentName.Contains("CriOS");
+        ViewBag.count = ChromeIOS_Count;
+        if (MSIE_Count || Trident_Count)
+        {
+            @Html.Raw("<script type='text/javascript' src='/scripts/IE_Browser.js'></script>");
+        }
+        @*else if (ChromeIOS_Count)
+            {
+
+                @Html.Raw("<script type='text/javascript' src='/scripts/IOS_Chrome.js'></script>");
+            }*@
+
+
+        else
+        {
+            @Html.Raw("<script type='text/javascript' src='/scripts/initiateSpeechBot.js'></script>");
+        }
+    }
+    <script src="~/Scripts/addNotification.js"></script>
+
+    @*updated for tabe/mobile keypad issue *@
+    <script>
+        $(window).load(function () {
+
+            $("input").focus(function () {
+                setTimeout(function () {
+                    var scrollDist = $(window).scrollTop();
+                    var infoBoxHeight = $('.infobox').height();
+                    var setHeight = $('.chatbotdiv').height() - scrollDist + infoBoxHeight;
+                    if (scrollDist > 0 && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        $('#chatBotDiv.chatbotdiv').attr('style', 'height: ' + setHeight + 'px !important');
+                        window.scrollTo(0, 0);
+                    }
+                    //console.log($('.chatbotdiv').height());
+
+                }, 500);
+
+            })
+            $("input").blur(function () {
+                setTimeout(function () {
+                    $('#chatBotDiv.chatbotdiv').removeAttr('style');
+                }, 0);
+            });
+            $(window).resize(function () {
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    $("input").blur();
+                }
+
+
+            })
+        });
+    </script>
+
+
+    <script>
+        function onSignin(idToken) {
+            let user = clientApplication.getAccount();
+            document.getElementById("userName").innerHTML = "Currently logged in as " + user.name;
+            let requestObj1 = {
+                scopes: ["user.read", 'openid', 'profile']
+            };
+        }
+
+        function onSignInClick() {
+            let requestObj = {
+                scopes: ["user.read", 'openid', 'profile']
+            };
+            debugger
+            clientApplication.loginRedirect(requestObj).then(onSignin).catch(function (error) { console.log(error) });
+            /*clientApplication.loginPopup(requestObj).then(onSignin).catch(function (error) { console.log(error) });*/
+        }
+
+        function getOAuthCardResourceUri(activity) {
+            if (activity &&
+                activity.attachments &&
+                activity.attachments[0] &&
+                activity.attachments[0].contentType === 'application/vnd.microsoft.card.oauth' &&
+                activity.attachments[0].content.tokenExchangeResource) {
+                // asking for token exchange with AAD
+                return activity.attachments[0].content.tokenExchangeResource.uri;
+            }
+        }
+
+        function exchangeTokenAsync(resourceUri) {
+            let user = clientApplication.getAccount();
+            if (user) {
+                let requestObj = {
+                    scopes: [resourceUri]
+                };
+                return clientApplication.acquireTokenSilent(requestObj)
+                    .then(function (tokenResponse) {
+                        return tokenResponse.accessToken;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+            else {
+                return Promise.resolve(null);
+            }
+        }
+
+        async function fetchJSON(url, options = {}) {
+            const res = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    accept: 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error(`Failed to fetch JSON due to ${res.status}`);
+            }
+
+            return await res.json();
+        }
+    </script>
+
+    <script>
+        var clientApplication;
+        (function () {
+            var msalConfig = {
+                auth: {
+                    clientId: '53a49c6e-cf24-4e29-87f2-55e2f8060b2c',
+                    authority: 'https://login.microsoftonline.com/dfa6c3f8-0b32-4a16-bf66-de2295df0850'
+          
+                },
+                cache: {
+                    cacheLocation: 'sessionStorage',
+                    storeAuthStateInCookie: false
+                }
+            };
+            if (!clientApplication) {
+                clientApplication = new Msal.UserAgentApplication(msalConfig);
+
+                let accessToken;
+
+                // Register Callbacks for Redirect flow
+                clientApplication.handleRedirectCallback(authRedirectCallBack);
+
+                function authRedirectCallBack(error, response) {
+                    debugger
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        if (response.tokenType === "id_token") {
+                            console.log("id_token acquired at: " + new Date().toString());
+
+                            var dt = Math.round(+new Date() / 1000);
+                            sessionStorage.setItem("exp", dt);
+
+
+                        } else if (response.tokenType === "access_token") {
+                            console.log("access_token acquired at: " + new Date().toString());
+                            accessToken = response.accessToken;
+
+                            //try {
+                            //  callMSGraph(graphConfig.graphMailEndpoint, accessToken, updateUI);
+                            //} catch(err) {
+                            //  console.log(err)
+                            //}
+                        } else {
+                            console.log("token type is:" + response.tokenType);
+                        }
+                    }
+                }
+            }
+        }());
+
+        (async function main() {
+
+            // Add your BOT ID below
+            var theURL = "https://defaultdfa6c3f80b324a16bf66de2295df08.50.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cre7b_hrBot/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration"
+
+            var userId = clientApplication.account?.accountIdentifier != null ?
+                ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
+                : (Math.random().toString() + Date.now().toString()).substr(0, 64);
+
+            const { token } = await fetchJSON(theURL);
+       
+            const directLine = window.WebChat.createDirectLine({ token });
+            const store = WebChat.createStore({}, ({ dispatch }) => next => action => {
+                const { type } = action;
+                if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
+                    dispatch({
+                        type: 'WEB_CHAT/SEND_EVENT',
+                        payload: {
+                            name: 'startConversation',
+                            type: 'event',
+                            value: { text: "hello" }
+                        }
+                    });
+                    return next(action);
+                }
+                if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+                    const activity = action.payload.activity;
+                    let resourceUri;
+                    if (activity.from && activity.from.role === 'bot' &&
+                        (resourceUri = getOAuthCardResourceUri(activity))) {
+                        exchangeTokenAsync(resourceUri).then(function (token) {
+                            if (token) {
+                                directLine.postActivity({
+                                    type: 'invoke',
+                                    name: 'signin/tokenExchange',
+                                    value: {
+                                        id: activity.attachments[0].content.tokenExchangeResource.id,
+                                        connectionName: activity.attachments[0].content.connectionName,
+                                        token
+                                    },
+                                    "from": {
+                                        id: userId,
+                                        name: clientApplication.account.name,
+                                        role: "user"
+                                    }
+                                }).subscribe(
+                                    id => {
+                                        if (id === 'retry') {
+                                            // bot was not able to handle the invoke, so display the oauthCard
+                                            return next(action);
+                                        }
+                                        // else: tokenexchange successful and we do not display the oauthCard
+                                    },
+                                    error => {
+                                        // an error occurred to display the oauthCard
+                                        return next(action);
+                                    }
+                                );
+                                return;
+                            }
+                            else
+                                return next(action);
+                        });
+                    }
+                    else
+                        return next(action);
+                }
+                else
+                    return next(action);
+            });
+
+            const styleOptions = {
+
+                // Add styleOptions to customize Web Chat canvas
+                hideUploadButton: true
+            };
+
+
+            window.WebChat.renderWebChat(
+                {
+                    directLine: directLine,
+                    store,
+                    userID: userId,
+                    styleOptions
+                },
+                document.getElementById('chatBotDiv')
+            );
+        })().catch(err => console.error("An error occurred: " + err));
+    </script>
+</body>
+</html>
