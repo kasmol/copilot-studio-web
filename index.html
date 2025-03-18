@@ -1,101 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Contoso Sample Web Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isuzu Dr.Fred</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Bot Framework Web Chat and MSAL -->
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
     <script type="text/javascript" src="https://alcdn.msauth.net/lib/1.2.0/js/msal.js"></script>
     <script src="https://unpkg.com/@azure/storage-blob@10.3.0/browser/azure-storage.blob.min.js"
         integrity="sha384-fsfhtLyVQo3L3Bh73qgQoRR328xEeXnRGdoi53kjo1uectCfAHFfavrBBN2Nkbdf"
         crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/lib/1.2.0/js/msal.js' type='text/javascript' %3E%3C/script%3E"));
-    </script>
 
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-
-        #heading {
-            background-color: black;
-            height: 50px;
-            width: 100%;
-            position: fixed;
-            display: flex;
-            align-items: center;
-            padding-left: 20px;
-            color: whitesmoke;
-            font-family: Segoe UI, sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        #chatwindow {
-            height: calc(100% - 50px);
-            width: 100%;
-            position: fixed;
-            top: 50px;
-            overflow: hidden;
-        }
-
-        #loginContainer {
-            z-index: 100;
-            position: absolute;
-            margin-top: 50px;
-            width: 100%;
-            padding: 10px;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #userName {
-            flex-grow: 1;
-        }
-
-        #login {
-            background-color: aliceblue;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        #webchat {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div id="heading">
-        <span>SSO Test Bot</span>
+    <!-- Logo -->
+    <img src="getsitelogob.png" alt="Isuzu Logo" class="logo">
+
+    <!-- Video Background -->
+    <video id="backgroundVideo" autoplay muted loop class="background-video">
+        <source src="Isuzu MU-X Showcase  Isuzu UTE Australia - Isuzu UTE Australia (720p, h264).mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Login Container -->
+    <div id="loginContainer">
+        <label id="userName">Not logged in.</label>
+        <button id="login" onclick="onSignInClick()">Log In</button>
+        <button id="logout" onclick="onSignOutClick()">Log Out</button>
     </div>
 
-    <div id="chatwindow">
-        <div id="loginContainer">
-            <label id="userName">Not logged in.</label>
-            <button id="login" onclick="onSignInClick()">Log In</button>
-        </div>
-        
-        <!-- Copilot Studio Chatbot IFrame -->
-        <iframe src="https://copilotstudio.microsoft.com/environments/Default-dfa6c3f8-0b32-4a16-bf66-de2295df0850/bots/cre7b_hrBot/webchat?__version__=2"></iframe>
-    </div>
+    <!-- IFrame Container for Chatbot -->
+    <main class="iframe-container">
+        <div id="webchat"></div>
+    </main>
 
+    <!-- JavaScript for Continuous Playback -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const video = document.getElementById("backgroundVideo");
+
+            // Force replay the video when it ends
+            video.addEventListener("ended", function () {
+                video.currentTime = 0; // Reset video to the start
+                video.play().catch((error) => {
+                    console.error("Error replaying the video:", error);
+                });
+            });
+        });
+    </script>
+
+    <!-- Original MSAL Authentication Script -->
     <script>
         function onSignin() {
             let user = clientApplication.getAccount();
-            document.getElementById("userName").innerHTML = "Currently logged in as " + user.name;
+            if (user) {
+                document.getElementById("userName").innerHTML = "Currently logged in as " + user.name;
+                document.getElementById("login").style.display = "none";
+                document.getElementById("logout").style.display = "block";
+            }
         }
 
         function onSignInClick() {
@@ -103,17 +76,27 @@
                 scopes: ["user.read", "openid", "profile"]
             };
 
-            clientApplication.loginPopup(requestObj).then(onSignin).catch(function (error) {
-                console.log(error);
-            });
+            clientApplication.loginPopup(requestObj)
+                .then(onSignin)
+                .catch(function (error) {
+                    console.error("Login failed:", error);
+                    alert("Login failed. Please try again.");
+                });
+        }
+
+        function onSignOutClick() {
+            clientApplication.logout();
+            document.getElementById("userName").innerHTML = "Not logged in.";
+            document.getElementById("login").style.display = "block";
+            document.getElementById("logout").style.display = "none";
         }
 
         var clientApplication;
         (function () {
             var msalConfig = {
                 auth: {
-                    clientId: '53a49c6e-cf24-4e29-87f2-55e2f8060b2c',
-                    authority: 'https://login.microsoftonline.com/dfa6c3f8-0b32-4a16-bf66-de2295df0850'
+                    clientId: 'ff20bd23-60f5-42c0-af50-0e941194dce8',
+                    authority: 'https://login.microsoftonline.com/1661e837-0a95-4bc6-a655-865365c2419b'
                 },
                 cache: {
                     cacheLocation: 'localStorage',
@@ -121,6 +104,98 @@
                 }
             };
             clientApplication = new Msal.UserAgentApplication(msalConfig);
+        })();
+    </script>
+
+    <!-- Web Chat and Token Exchange Logic -->
+    <script>
+        (async function main() {
+            try {
+                // Add your BOT ID below 
+                var theURL = "https://b838e0443024ea32b2f47862b85e99.03.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr74e_blogSiteCopilot/directline/token?api-version=2022-03-01-preview"; // you can find the token URL via the mobile app channel configuration
+
+                var userId = clientApplication.account?.accountIdentifier != null ?
+                    ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
+                    : (Math.random().toString() + Date.now().toString()).substr(0, 64);
+
+                const { token } = await fetchJSON(theURL);
+                const directLine = window.WebChat.createDirectLine({ token });
+                const store = WebChat.createStore({}, ({ dispatch }) => next => action => {
+                    const { type } = action;
+                    if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
+                        dispatch({
+                            type: 'WEB_CHAT/SEND_EVENT',
+                            payload: {
+                                name: 'startConversation',
+                                type: 'event',
+                                value: { text: "hello" }
+                            }
+                        });
+                        return next(action);
+                    }
+                    if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+                        const activity = action.payload.activity;
+                        let resourceUri;
+                        if (activity.from && activity.from.role === 'bot' &&
+                            (resourceUri = getOAuthCardResourceUri(activity))) {
+                            exchangeTokenAsync(resourceUri).then(function (token) {
+                                if (token) {
+                                    directLine.postActivity({
+                                        type: 'invoke',
+                                        name: 'signin/tokenExchange',
+                                        value: {
+                                            id: activity.attachments[0].content.tokenExchangeResource.id,
+                                            connectionName: activity.attachments[0].content.connectionName,
+                                            token
+                                        },
+                                        "from": {
+                                            id: userId,
+                                            name: clientApplication.account.name,
+                                            role: "user"
+                                        }
+                                    }).subscribe(
+                                        id => {
+                                            if (id === 'retry') {
+                                                // bot was not able to handle the invoke, so display the oauthCard
+                                                return next(action);
+                                            }
+                                            // else: token exchange successful and we do not display the oauthCard
+                                        },
+                                        error => {
+                                            // an error occurred to display the oauthCard
+                                            return next(action);
+                                        }
+                                    );
+                                    return;
+                                }
+                                else
+                                    return next(action);
+                            });
+                        }
+                        else
+                            return next(action);
+                    }
+                    else
+                        return next(action);
+                });
+
+                const styleOptions = {
+                    // Add styleOptions to customize Web Chat canvas
+                    hideUploadButton: true
+                };
+
+                window.WebChat.renderWebChat(
+                    {
+                        directLine: directLine,
+                        store,
+                        userID: userId,
+                        styleOptions
+                    },
+                    document.getElementById('webchat')
+                );
+            } catch (error) {
+                console.error("An error occurred: ", error);
+            }
         })();
     </script>
 </body>
