@@ -206,7 +206,7 @@
             var theURL = "https://defaultdfa6c3f80b324a16bf66de2295df08.50.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cre7b_hrBot/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration
 
             var userId = clientApplication.account?.accountIdentifier != null ?
-                ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
+                ("my-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
                 : (Math.random().toString() + Date.now().toString()).substr(0, 64);
 
             const { token } = await fetchJSON(theURL);
