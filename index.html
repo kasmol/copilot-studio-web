@@ -43,7 +43,7 @@
     <!-- IFrame Container for Chatbot -->
     <main class="iframe-container">
         <iframe
-            src="https://copilotstudio.microsoft.com/environments/Default-8eafaa3d-7204-4e17-b817-17a294850883/bots/cr405_isuzuBot/webchat?__version__=2"
+            src="https://copilotstudio.microsoft.com/environments/Default-dfa6c3f8-0b32-4a16-bf66-de2295df0850/bots/cre7b_hrBot/webchat?__version__=2"
             frameborder="0" style="width: 100%; height: 100%;"></iframe>
     </main>
 
@@ -138,8 +138,8 @@
         (function () {
             var msalConfig = {
                 auth: {
-                    clientId: 'bfcb426d-335e-40b6-b67b-9ea6dfa752ea',
-                    authority: 'https://login.microsoftonline.com/8eafaa3d-7204-4e17-b817-17a294850883'
+                    clientId: 'b53a49c6e-cf24-4e29-87f2-55e2f8060b2c',
+                    authority: 'https://login.microsoftonline.com/dfa6c3f8-0b32-4a16-bf66-de2295df0850'
                 },
                 cache: {
                     cacheLocation: 'localStorage',
@@ -152,8 +152,7 @@
         (async function main() {
 
             // Add your BOT ID below 
-            var theURL = "https://default8eafaa3d72044e17b81717a2948508.83.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr405_isuzuBot/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration
-
+            var theURL = "https://defaultdfa6c3f80b324a16bf66de2295df08.50.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cre7b_hrBot/directline/token?api-version=2022-03-01-preview"
             var userId = clientApplication.account?.accountIdentifier != null ?
                 ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
                 : (Math.random().toString() + Date.now().toString()).substr(0, 64);
