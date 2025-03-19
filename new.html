@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Studio SSO Login</title>
+    
+    <!-- Include Microsoft Authentication Library (MSAL.js) -->
+    <script src="https://alcdn.msauth.net/browser/2.25.0/js/msal-browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+        button {
+            background-color: #0078D4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #005A9E;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Sign in to Access Copilot Studio</h2>
+    <button id="signInBtn" onclick="signIn()">Sign In</button>
+    <button id="signOutBtn" onclick="signOut()" style="display:none;">Sign Out</button>
+
+    <p id="user-info"></p>
+
+    <script>
+        // MSAL Configuration
+        const msalConfig = {
+            auth: {
+                clientId: "53a49c6e-cf24-4e29-87f2-55e2f8060b2c", // Replace with your Azure AD App ID
+                authority: "https://login.microsoftonline.com/dfa6c3f8-0b32-4a16-bf66-de2295df0850", // Replace with your Tenant ID
+                redirectUri: "https://cps-copilot-studio.netlify.app/", // Replace with your app's redirect URI
+            },
+            cache: {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: true
+            }
+        };
+
+        const loginRequest = {
+            scopes: ["User.Read"] // Scope for user profile
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        async function signIn() {
+            try {
+                const response = await msalInstance.loginPopup(loginRequest);
+                console.log("User signed in:", response);
+                document.getElementById("user-info").innerText = `Welcome, ${response.account.username}`;
+                document.getElementById("signInBtn").style.display = "none";
+                document.getElementById("signOutBtn").style.display = "inline-block";
+
+                // Redirect user to Copilot Studio bot page
+                window.location.href = "https://copilotstudio.microsoft.com/environments/Default-dfa6c3f8-0b32-4a16-bf66-de2295df0850/bots/cre7b_hrBot/webchat?__version__=2";
+            } catch (error) {
+                console.error("Sign-in error:", error);
+            }
+        }
+
+        function signOut() {
+            msalInstance.logoutPopup().then(() => {
+                document.getElementById("user-info").innerText = "";
+                document.getElementById("signInBtn").style.display = "inline-block";
+                document.getElementById("signOutBtn").style.display = "none";
+            });
+        }
+
+        // Check if user is already signed in
+        msalInstance.handleRedirectPromise().then(response => {
+            const currentAccount = msalInstance.getAllAccounts()[0];
+            if (currentAccount) {
+                document.getElementById("user-info").innerText = `Welcome, ${currentAccount.username}`;
+                document.getElementById("signInBtn").style.display = "none";
+                document.getElementById("signOutBtn").style.display = "inline-block";
+            }
+        });
+    </script>
+
+</body>
+</html>
