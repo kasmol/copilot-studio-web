@@ -16,7 +16,7 @@
         (function () {
             var msalConfig = {
                 auth: {
-                    clientId: '2ea98675-f228-44d4-88d4-13d55d5132ce',
+                    clientId: '53a49c6e-cf24-4e29-87f2-55e2f8060b2c',
                     authority: 'https://login.microsoftonline.com/dfa6c3f8-0b32-4a16-bf66-de2295df0850'
                 },
                 cache: {
@@ -209,7 +209,7 @@
             var theURL = "https://defaultdfa6c3f80b324a16bf66de2295df08.50.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cre7b_hrBot/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration
             var userdetails = clientApplication.getAccount();
             var userId = clientApplication.account?.accountIdentifier != null ?
-                ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
+                ("My-custom-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
                 : (Math.random().toString() + Date.now().toString()).substr(0, 64);
 
             const { token } = await fetchJSON(theURL);
