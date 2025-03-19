@@ -1,68 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isuzu Dr.Fred</title>
-
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-
-    <!-- Bot Framework Web Chat and MSAL -->
+    <title>Contoso Sample Web Chat</title>
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
     <script type="text/javascript" src="https://alcdn.msauth.net/lib/1.2.0/js/msal.js"></script>
     <script src="https://unpkg.com/@azure/storage-blob@10.3.0/browser/azure-storage.blob.min.js"
         integrity="sha384-fsfhtLyVQo3L3Bh73qgQoRR328xEeXnRGdoi53kjo1uectCfAHFfavrBBN2Nkbdf"
         crossorigin="anonymous"></script>
-
-    <!-- External Stylesheet -->
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-    <!-- Logo -->
-    <img src="getsitelogob.png" alt="Isuzu Logo" class="logo">
-
-    <!-- Video Background -->
-    <video id="backgroundVideo" autoplay muted loop class="background-video">
-        <source src="Isuzu MU-X Showcase  Isuzu UTE Australia - Isuzu UTE Australia (720p, h264).mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <!-- Login Container -->
-    <div id="loginContainer">
-        <label id="userName">Not logged in.</label>
-        <button id="login" onclick="onSignInClick()">Log In</button>
-        <button id="logout" onclick="onSignOutClick()">Log Out</button>
-    </div>
-
-    <!-- IFrame Container for Chatbot -->
-    <!-- <main class="iframe-container">
-        <iframe
-            src="https://copilotstudio.microsoft.com/environments/Default-dfa6c3f8-0b32-4a16-bf66-de2295df0850/bots/cre7b_hrBot/webchat?__version__=2"
-            frameborder="0" style="width: 100%; height: 100%;"></iframe>
-    </main> -->
-
-    <!-- JavaScript for Continuous Playback -->
+    <script type="text/javascript">
+        if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/lib/1.2.0/js/msal.js' type='text/javascript' %3E%3C/script%3E"));
+    </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const video = document.getElementById("backgroundVideo");
-
-            // Force replay the video when it ends
-            video.addEventListener("ended", function () {
-                video.currentTime = 0; // Reset video to the start
-                video.play().catch((error) => {
-                    console.error("Error replaying the video:", error);
-                });
-            });
-        });
+        var clientApplication;
+        (function () {
+            var msalConfig = {
+                auth: {
+                    clientId: 'de964867-b3fb-4a2f-8707-af06876a5d2c',
+                    authority: 'https://login.microsoftonline.com/8eafaa3d-7204-4e17-b817-17a294850883'
+                },
+                cache: {
+                    cacheLocation: 'localStorage',
+                    storeAuthStateInCookie: false
+                }
+            };
+            if (!clientApplication) {
+                clientApplication = new Msal.UserAgentApplication(msalConfig);
+            }
+        }());
     </script>
 
-    <!-- Original MSAL Authentication Script -->
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-family: Segoe UI;
+            line-height: 20px;
+            color: whitesmoke;
+            display: table-cell;
+            padding: 13px 0px 0px 20px;
+        }
+
+        #heading {
+            background-color: black;
+            height: 50px;
+        }
+
+        .main {
+            margin: 18px;
+            border-radius: 4px;
+        }
+
+        div[role="form"] {
+            background-color: black;
+        }
+
+        #webchat {
+            position: fixed;
+            height: calc(100% - 50px);
+            width: 100%;
+            top: 50px;
+            overflow: hidden;
+        }
+
+        #heading {
+            background-color: black;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            height: 50px;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        h1 {
+            font-size: 14px;
+            font-family: Segoe UI;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            color: #F3F2F1;
+            letter-spacing: 0.005em;
+            display: table-cell;
+            vertical-align: middle;
+            padding: 13px 0px 0px 20px;
+        }
+
+        #chatwindow {
+            height: 80%;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        #loginButton {
+
+            height: 100px;
+            width: 100%;
+            position: fixed;
+        }
+    </style>
+
+</head>
+
+<body onload="onSignInClick()">
+    <div id="chatwindow">
+        <div id="heading">
+            <div><span>SSO Test Bot</span></div>
+        </div>
+        <div style="z-index: 100;position: absolute;margin-top: 50px;width: 100%;">
+            <div>
+                <label id="userName" name="userName" style="width:75%;height:15px;border-color: Transparent;">Not logged
+                    in.</label>
+                <button id="login" name="login" onclick="onSignInClick()"
+                    style="float: right;background-color: aliceblue;">Log In</button>
+            </div>
+        </div>
+        <div id="webchat">
+        </div>
+
+    </div>
     <script>
         function onSignin(idToken) {
             let user = clientApplication.getAccount();
@@ -70,6 +138,7 @@
             let requestObj1 = {
                 scopes: ["user.read", 'openid', 'profile']
             };
+            reload();
         }
 
         function onSignInClick() {
@@ -78,14 +147,8 @@
             };
 
             clientApplication.loginPopup(requestObj).then(onSignin).catch(function (error) { console.log(error) });
-        }
 
-        // function onSignOutClick() {
-        //     clientApplication.logout();
-        //     document.getElementById("userName").innerHTML = "Not logged in.";
-        //     document.getElementById("login").style.display = "block";
-        //     document.getElementById("logout").style.display = "none";
-        // }
+        }
 
         function getOAuthCardResourceUri(activity) {
             if (activity &&
@@ -97,6 +160,7 @@
                 return activity.attachments[0].content.tokenExchangeResource.uri;
             }
         }
+
         function exchangeTokenAsync(resourceUri) {
             let user = clientApplication.getAccount();
             if (user) {
@@ -115,6 +179,7 @@
                 return Promise.resolve(null);
             }
         }
+
         async function fetchJSON(url, options = {}) {
             const res = await fetch(url, {
                 ...options,
@@ -129,25 +194,11 @@
             }
 
             return await res.json();
-        }
-
-
+        } 
     </script>
+
     <script>
-        var clientApplication;
-        (function () {
-            var msalConfig = {
-                auth: {
-                    clientId: 'de964867-b3fb-4a2f-8707-af06876a5d2c',
-                    authority: 'https://login.microsoftonline.com/8eafaa3d-7204-4e17-b817-17a294850883'
-                },
-                cache: {
-                    cacheLocation: 'localStorage',
-                    storeAuthStateInCookie: false
-                }
-            };
-            clientApplication = new Msal.UserAgentApplication(msalConfig);
-        })();
+
 
         (async function main() {
             if (clientApplication.getAccount() == null) {
@@ -155,9 +206,10 @@
             }
 
             // Add your BOT ID below 
-            var theURL = "https://default8eafaa3d72044e17b81717a2948508.83.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr405_isuzuBot/directline/token?api-version=2022-03-01-preview"
+            var theURL = "https://default8eafaa3d72044e17b81717a2948508.83.environment.api.powerplatform.com/powervirtualagents/botsbyschema/cr405_isuzuBot/directline/token?api-version=2022-03-01-preview" // you can find the token URL via the mobile app channel configuration
+            var userdetails = clientApplication.getAccount();
             var userId = clientApplication.account?.accountIdentifier != null ?
-                ("You-customized-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
+                ("My-custom-prefix" + clientApplication.account.accountIdentifier).substr(0, 64)
                 : (Math.random().toString() + Date.now().toString()).substr(0, 64);
 
             const { token } = await fetchJSON(theURL);
@@ -170,7 +222,7 @@
                         payload: {
                             name: 'startConversation',
                             type: 'event',
-                            value: { text: "hello" }
+                            value: { text: userdetails.name }
                         }
                     });
                     return next(action);
@@ -238,7 +290,6 @@
                 document.getElementById('webchat')
             );
         })().catch(err => console.error("An error occurred: " + err));
-
     </script>
 </body>
 
